@@ -1066,9 +1066,8 @@ class TLAPI:
 
     @log_func
     @tl_typechecked
-    # TODO: should be replaced with "get_latest_asking_price"
     def get_latest_asking_price(self, instrument_id: int) -> float:
-        """Returns latest price informations for requested instrument.
+        """Returns latest ask price informations for requested instrument.
 
         Args:
             instrument_id (int): Instrument Id
@@ -1084,9 +1083,8 @@ class TLAPI:
     
     @log_func
     @tl_typechecked
-    # TODO: should be replaced with "get_latest_asking_price"
     def get_latest_bid_price(self, instrument_id: int) -> float:
-        """Returns latest price informations for requested instrument.
+        """Returns latest bid price informations for requested instrument.
 
         Args:
             instrument_id (int): Instrument Id
@@ -1280,7 +1278,7 @@ class TLAPI:
             "takeProfit": take_profit,
             "takeProfitType": take_profit_type,
         }
-        print(request_body)
+        self.log.debug(f"request: {request_body}")
 
         if position_id != 0:
             request_body["positionId"] = position_id
@@ -1412,16 +1410,12 @@ class TLAPI:
     @tl_typechecked
     # TODO: this should probably be further expanded / validated
     def get_orders(self) -> bool:
-        """Modifies a open position.
-
-        Args:
-            order_id (int): Order Id
-            modification_params (_ModificationParamsType): Order modification details
+        """Gets pending orders.
 
         Returns:
             bool: True on success, False on error
         """
-        print('AccessToken: ', self.get_access_token())
+        self.log.debug('AccessToken: ', self.get_access_token())
         route_url = f"{self._base_url}/trade/accounts/{self.account_id}/orders"
 
         self.log.info(f"Getting Orders")
@@ -1432,7 +1426,7 @@ class TLAPI:
             timeout=_TIMEOUT,
         )
         response_json = self._get_response_json(response)
-        self.log.info(f"Order modification response: {response_json}")
+        self.log.info(f"Orders fetching response: {response_json}")
         response_status: str = get_nested_key(response_json, ["s"], str)
         return response_status == "ok"
     
@@ -1440,16 +1434,12 @@ class TLAPI:
     @tl_typechecked
     # TODO: this should probably be further expanded / validated
     def get_positions(self) -> bool:
-        """Modifies a open position.
-
-        Args:
-            order_id (int): Order Id
-            modification_params (_ModificationParamsType): Order modification details
+        """Gets open positions.
 
         Returns:
             bool: True on success, False on error
         """
-        print('AccessToken: ', self.get_access_token())
+        self.log.debug('AccessToken: ', self.get_access_token())
         route_url = f"{self._base_url}/trade/accounts/{self.account_id}/positions"
 
         self.log.info(f"Getting positions")
@@ -1460,7 +1450,7 @@ class TLAPI:
             timeout=_TIMEOUT,
         )
         response_json = self._get_response_json(response)
-        self.log.info(f"Position modification response: {response_json}")
+        self.log.info(f"Positions fetching response: {response_json}")
         response_status: str = get_nested_key(response_json, ["s"], str)
         return response_status == "ok"
     
